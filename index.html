@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F5F0">
+<title>单干体质测试｜你到底适合打工还是自己干</title>
+<meta name="description" content="20 道题，测出你的单干体质分数和你现在该用的节奏。不构成职业建议。">
+<style>
+  :root{
+    --paper:#F7F5F0;
+    --paper-2:#FFFFFF;
+    --ink:#1A1A17;
+    --ink-2:#5C5A52;
+    --ink-3:#8F8C82;
+    --accent:#1F5C4A;
+    --accent-soft:#E4EDE8;
+    --line:#DEDAD0;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    overflow-x:hidden;
+  }
+  .wrap{
+    width:100%;
+    max-width:560px;
+    margin:0 auto;
+    padding:24px 22px calc(24px + env(safe-area-inset-bottom));
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .screen{display:none;flex:1 1 auto;flex-direction:column;animation:fade .28s ease both}
+  .screen.on{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen{animation:none}}
+
+  /* ---------- 封面 ---------- */
+  .cover{justify-content:center;gap:0}
+  .kicker{
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 20px;font-weight:600;
+  }
+  .cover h1{
+    margin:0 0 22px;
+    font-size:clamp(34px,10.4vw,46px);
+    line-height:1.16;
+    font-weight:800;
+    letter-spacing:-.01em;
+  }
+  .cover h1 span{display:block}
+  .cover h1 .accent{color:var(--accent)}
+  .sub{
+    margin:0 0 10px;font-size:17px;color:var(--ink-2);line-height:1.55;
+  }
+  .meta{
+    margin:0 0 34px;font-size:13px;color:var(--ink-3);letter-spacing:.02em;
+  }
+  .btn{
+    display:block;width:100%;border:0;cursor:pointer;
+    padding:18px 20px;font-size:17px;font-weight:700;letter-spacing:.02em;
+    border-radius:var(--radius);
+    background:var(--accent);color:#fff;
+    font-family:inherit;
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .btn:active{transform:scale(.985);opacity:.92}
+  .btn-hint{
+    text-align:center;font-size:13px;color:var(--ink-3);margin:14px 0 0;
+  }
+  .btn.ghost{
+    background:transparent;color:var(--accent);
+    border:1px solid var(--accent);
+  }
+
+  /* ---------- 做题 ---------- */
+  .quiz{justify-content:flex-start}
+  .progress{
+    position:relative;height:3px;background:var(--line);
+    border-radius:99px;overflow:hidden;margin:0 0 28px;flex:0 0 auto;
+  }
+  .progress i{
+    position:absolute;inset:0 auto 0 0;width:0;
+    background:var(--accent);border-radius:99px;
+    transition:width .3s cubic-bezier(.4,0,.2,1);
+  }
+  .qcount{
+    font-size:12px;letter-spacing:.14em;color:var(--ink-3);
+    margin:0 0 14px;font-weight:600;
+  }
+  .qtext{
+    font-size:clamp(20px,5.6vw,24px);
+    line-height:1.45;font-weight:700;margin:0 0 26px;
+    letter-spacing:-.005em;
+  }
+  .opts{display:flex;flex-direction:column;gap:9px;margin:0 0 4px}
+  .opt{
+    display:block;width:100%;text-align:left;cursor:pointer;
+    background:var(--paper-2);border:1px solid var(--line);
+    color:var(--ink);font-family:inherit;
+    font-size:16px;line-height:1.45;
+    padding:15px 16px;border-radius:var(--radius);
+    transition:border-color .14s ease, background .14s ease, transform .1s ease;
+  }
+  .opt:active{transform:scale(.994);background:var(--accent-soft);border-color:var(--accent)}
+  .opt .idx{
+    display:inline-block;min-width:1.4em;color:var(--ink-3);
+    font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;
+  }
+  .opt.chosen{background:var(--accent-soft);border-color:var(--accent)}
+  .opt.chosen .idx{color:var(--accent)}
+
+  /* ---------- 结果 ---------- */
+  .result{justify-content:flex-start;padding-top:8px}
+  .rlabel{
+    position:relative;z-index:1;
+    font-size:12px;letter-spacing:.2em;color:var(--ink-3);
+    font-weight:600;margin:0 0 6px;text-transform:uppercase;
+  }
+  .scorewrap{
+    position:relative;margin:0 0 10px;
+    display:flex;align-items:flex-end;gap:8px;
+    isolation:isolate;
+  }
+  .scoreblob{
+    position:absolute;left:-12px;top:-12px;
+    width:min(58vw,214px);height:min(38vw,138px);
+    border-radius:50%;background:var(--accent-soft);opacity:.62;
+    z-index:-1;pointer-events:none;
+  }
+  .score{
+    position:relative;z-index:1;
+    font-size:clamp(96px,30vw,124px);
+    line-height:.86;font-weight:800;
+    letter-spacing:-.05em;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);
+  }
+  .score-unit{
+    position:relative;z-index:1;
+    font-size:18px;font-weight:600;color:var(--ink-3);
+    padding-bottom:12px;
+  }
+  .band{
+    position:relative;z-index:1;
+    font-size:clamp(22px,6vw,26px);font-weight:800;color:var(--accent);
+    margin:2px 0 4px;letter-spacing:.01em;
+  }
+  .judge{
+    position:relative;z-index:1;
+    font-size:16px;color:var(--ink-2);margin:0 0 26px;
+  }
+  .dims{display:flex;flex-direction:column;gap:11px;margin:0 0 26px}
+  .dim{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center}
+  .dim .name{font-size:13px;color:var(--ink-2);font-weight:600}
+  .dim .val{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .dim .track{
+    grid-column:1 / -1;height:6px;background:var(--line);
+    border-radius:99px;overflow:hidden;
+  }
+  .dim .track i{display:block;height:100%;background:var(--accent);border-radius:99px;width:0;transition:width .7s cubic-bezier(.2,.7,.2,1)}
+  .dim.weak .name,.dim.weak .val{color:#A4553C}
+  .dim.weak .track i{background:#A4553C}
+
+  .weakbox{
+    background:var(--paper-2);border:1px solid var(--line);
+    border-left:3px solid #A4553C;
+    padding:14px 16px;border-radius:var(--radius);margin:0 0 26px;
+  }
+  .weakbox .t{font-size:14px;font-weight:700;margin:0 0 6px}
+  .weakbox .d{font-size:14px;color:var(--ink-2);line-height:1.6;margin:0}
+
+  .bodytext{font-size:15px;color:var(--ink-2);line-height:1.75;margin:0 0 14px}
+  .bodytext:last-of-type{margin-bottom:26px}
+  .actions{display:flex;flex-direction:column;gap:10px;margin:0 0 22px}
+  .foot{
+    font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px solid var(--line);padding-top:14px;margin:auto 0 0;
+  }
+  .foot p{margin:0}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 封面 -->
+  <section class="screen cover on" id="screen-cover">
+    <p class="kicker">单干体质测试</p>
+    <h1><span>你到底</span><span>适合打工</span><span class="accent">还是自己干</span></h1>
+    <p class="sub">不看你有多少钱、多少资源，只看四件事</p>
+    <p class="meta">20 道题 · 约 2 分钟 · 没有标准答案</p>
+    <button class="btn" id="btn-start" type="button">开始测试</button>
+    <p class="btn-hint">测完给你一个分数，还有你现在该用的节奏</p>
+  </section>
+
+  <!-- 做题 -->
+  <section class="screen quiz" id="screen-quiz">
+    <div class="progress"><i id="bar"></i></div>
+    <p class="qcount" id="qcount">第 1 / 20 题</p>
+    <h2 class="qtext" id="qtext"></h2>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- 结果 -->
+  <section class="screen result" id="screen-result">
+    <p class="rlabel">你的单干体质</p>
+    <div class="scorewrap">
+      <div class="scoreblob" aria-hidden="true"></div>
+      <div class="score" id="score">0</div>
+      <div class="score-unit">分</div>
+    </div>
+    <div class="band" id="band"></div>
+    <p class="judge" id="judge"></p>
+
+    <div class="dims" id="dims"></div>
+
+    <div class="weakbox">
+      <p class="t" id="weak-title"></p>
+      <p class="d" id="weak-advice"></p>
+    </div>
+
+    <div id="bandbody"></div>
+
+    <div class="actions">
+      <button class="btn" id="btn-copy" type="button">复制分数，看看谁比我高</button>
+      <button class="btn ghost" id="btn-again" type="button">再测一次</button>
+    </div>
+
+    <div class="foot">
+      <p>本测试只描述你现在的状态，不构成任何职业建议。</p>
+      <p>分数没有好坏：低分是省钱，高分是另一种辛苦。</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var DIMS = ['DRIVE','PATH','RISK','FULL'];
+  var DIM_CN = { DRIVE:'自驱力', PATH:'解决问题的路径', RISK:'抗不确定性', FULL:'全流程能力' };
+  var WEAK_ADVICE = {
+    DRIVE:'先给自己定一个「每天只做二十分钟」的动作，比定一个大计划有用。',
+    PATH:'你不是不会，是习惯先问人。单干前，先练一次「自己咬到底」。',
+    RISK:'先算清楚你能撑几个月，把数字写下来。焦虑多半来自没算过，不是算得太清。',
+    FULL:'找一个你能补上的最短闭环：做一样你能自己卖出去的小东西，跑完一次就够。'
+  };
+
+  // 题序严格 Q1 → Q20；每题标注所属维度
+  var QUESTIONS = [
+    { dim:'DRIVE', text:'一整周没人给你派活，你会怎样？', options:[
+      {t:'自己找事做，反而更来劲', v:4},
+      {t:'前几天爽，后面开始有点慌', v:2},
+      {t:'有一堆想做的，但一件都没启动', v:1},
+      {t:'等有人来找我，不然不知道干嘛', v:0},
+      {t:'先列个清单，再一条条划掉', v:3}
+    ]},
+    { dim:'PATH', text:'遇到一个完全不会的东西，你第一个动作？', options:[
+      {t:'自己先搜、先试，实在不行再问', v:4},
+      {t:'自己摸一半，带着具体问题去问', v:3},
+      {t:'先找做过的人问一句，省时间', v:2},
+      {t:'找个人一起弄，两个人快', v:1},
+      {t:'先记下来，放到有空再说', v:0}
+    ]},
+    { dim:'RISK', text:'三个月收入不稳定，你会？', options:[
+      {t:'该干嘛干嘛，账上还有数就行', v:4},
+      {t:'先缩开支，把跑道拉长', v:3},
+      {t:'开始焦虑，但还能继续做', v:2},
+      {t:'每天算账，算完睡不着', v:1},
+      {t:'立刻去找个稳定的活', v:0}
+    ]},
+    { dim:'FULL', text:'一个从想到卖的事，你一个人能跑到哪一步？', options:[
+      {t:'从想到卖，全程都能', v:4},
+      {t:'能做，但每一步都很慢', v:3},
+      {t:'能做到一半，后面要人接', v:2},
+      {t:'只擅长其中一段', v:1},
+      {t:'只想不做', v:0}
+    ]},
+    { dim:'DRIVE', text:'给自己定的计划，通常怎么收场？', options:[
+      {t:'大部分能做完，剩下的也会补', v:4},
+      {t:'开头猛，中间就散了', v:2},
+      {t:'计划写得特别好，执行另说', v:1},
+      {t:'很少定计划，定了也没用', v:0},
+      {t:'会按周复盘，下个月调一调', v:3}
+    ]},
+    { dim:'PATH', text:'东西坏了或者出错了，你先？', options:[
+      {t:'自己拆开看看哪里不对', v:4},
+      {t:'先上网查有没有人遇到过', v:3},
+      {t:'直接找人来看', v:2},
+      {t:'问一圈人，谁懂找谁', v:1},
+      {t:'先放着，说不定自己会好', v:0}
+    ]},
+    { dim:'RISK', text:'一笔钱投出去可能打水漂，你？', options:[
+      {t:'投之前就算好最多亏多少', v:4},
+      {t:'先小投一点试试水', v:3},
+      {t:'会投，但会难受一阵', v:2},
+      {t:'想想还是算了', v:1},
+      {t:'钱不能冒这个险', v:0}
+    ]},
+    { dim:'FULL', text:'要你把东西卖出去，你会？', options:[
+      {t:'自己写、自己发、自己回私信', v:4},
+      {t:'能写能发，但不爱回消息', v:3},
+      {t:'找人帮卖，我负责做', v:2},
+      {t:'只想做东西，卖的部分想找人', v:1},
+      {t:'完全不想碰卖这件事', v:0}
+    ]},
+    { dim:'DRIVE', text:'一个人在家待三天，你会？', options:[
+      {t:'舒服，正好把想做的事做完', v:4},
+      {t:'前两天挺好，第三天开始想找人说话', v:3},
+      {t:'待是能待，但什么都没干成', v:2},
+      {t:'能待，但效率反而更低', v:1},
+      {t:'待不住，一定要出门', v:0}
+    ]},
+    { dim:'PATH', text:'你要学一个新技能，会怎么学？', options:[
+      {t:'直接上手做，边做边查', v:4},
+      {t:'先看一遍完整教程再动手', v:3},
+      {t:'报个课，跟着老师走', v:2},
+      {t:'找个人带我入门', v:1},
+      {t:'收藏一堆，一直没看', v:0}
+    ]},
+    { dim:'RISK', text:'别人问你「最近在干嘛」，你还没做出成绩，你会？', options:[
+      {t:'直接说在做的事，不觉得丢人', v:4},
+      {t:'只说进展，不说难处', v:3},
+      {t:'说个大概，细节略过', v:2},
+      {t:'说「还在看」，不想多说', v:1},
+      {t:'编个体面点的说法', v:0}
+    ]},
+    { dim:'FULL', text:'让你做张海报、剪条视频，你？', options:[
+      {t:'自己弄，丑点也能用', v:4},
+      {t:'会用模板，凑合能看', v:3},
+      {t:'会一点，但做得很慢', v:2},
+      {t:'只会找人做', v:1},
+      {t:'完全不会，也不想学', v:0}
+    ]},
+    { dim:'DRIVE', text:'有件事你很想做，但没人支持你，你会？', options:[
+      {t:'先做起来，做出来再说', v:4},
+      {t:'自己先试一小步，看反应', v:3},
+      {t:'找人聊，等有人点头再动', v:2},
+      {t:'想很久，还是没开始', v:1},
+      {t:'算了，等条件成熟', v:0}
+    ]},
+    { dim:'PATH', text:'一个问题你想不明白，你更可能？', options:[
+      {t:'自己一直想，想到通为止', v:4},
+      {t:'写下来，理一遍思路', v:3},
+      {t:'找人说一遍，边说边清楚', v:2},
+      {t:'问别人要个答案', v:1},
+      {t:'先不想了，过两天再说', v:0}
+    ]},
+    { dim:'RISK', text:'计划被打乱了，你？', options:[
+      {t:'当场改完，继续做', v:4},
+      {t:'先停下来，重新排一遍', v:3},
+      {t:'烦一下，然后接受', v:2},
+      {t:'会一直想着原来那个版本', v:1},
+      {t:'干脆不做了', v:0}
+    ]},
+    { dim:'FULL', text:'客户来投诉，你会？', options:[
+      {t:'自己回，把事说清楚', v:4},
+      {t:'先道歉，再想办法补救', v:3},
+      {t:'直接退款，不想纠缠', v:2},
+      {t:'找人帮我说', v:1},
+      {t:'拖一拖，等情绪过去', v:0}
+    ]},
+    { dim:'DRIVE', text:'早上没人叫你，你更接近哪种？', options:[
+      {t:'不用闹钟，到点就醒', v:4},
+      {t:'闹钟响两遍能爬起来', v:3},
+      {t:'全靠一个必须出门的理由', v:2},
+      {t:'闹钟响三遍，起来也懵', v:1},
+      {t:'睡到自然醒，一天就过去了', v:0}
+    ]},
+    { dim:'PATH', text:'要做个决定，你通常？', options:[
+      {t:'自己查清楚，自己拍板', v:4},
+      {t:'先问一圈人，再自己定', v:3},
+      {t:'谁有经验就听谁的', v:2},
+      {t:'让家里人或者朋友帮我定', v:1},
+      {t:'拖到不得不定', v:0}
+    ]},
+    { dim:'RISK', text:'半年没看到结果，你？', options:[
+      {t:'认了，本来就没那么快', v:4},
+      {t:'会怀疑，但还在做', v:3},
+      {t:'找人一起，互相盯着', v:2},
+      {t:'开始频繁换方向', v:1},
+      {t:'基本就放弃了', v:0}
+    ]},
+    { dim:'FULL', text:'一个项目要收尾，你？', options:[
+      {t:'会盯着收干净，哪怕很烦', v:4},
+      {t:'一定收尾，不然睡不着', v:3},
+      {t:'大头做完就差不多了', v:2},
+      {t:'收尾最烦，经常烂在那', v:1},
+      {t:'找人替我收', v:0}
+    ]}
+  ];
+
+  // 5 档（从上往下判断，命中即停）
+  var BANDS = [
+    { min:85, max:100, name:'单干型', judge:'没人管你，你反而更快',
+      body:['你受得了没人管。不是你不怕，是你怕也照做。你身上最值钱的是「事情没人推也能往前挪」这一条——这一条大多数人一辈子都没有。',
+            '但高分不是让你明天就辞职。先拿一个周末，按你自己的节奏做完一件小事、卖出去一次，看看真实的反馈和你想象的是不是一回事。'] },
+    { min:70, max:84, name:'试水型', judge:'可以小成本试一次，别 all in',
+      body:['你基本能自己扛，只是某些环节还想有个保险。这不是缺点，是清醒。',
+            '你现在最该做的不是 all in，是拿最小成本试一次：一个小东西、一个真实客户、一笔真钱。跑通一次，你对自己的判断会比任何测试都准。'] },
+    { min:50, max:69, name:'双轨型', judge:'主业稳着，副业先跑起来',
+      body:['你两边都有一点：能自己开工，也享受有人在上面定调。这类人硬逼自己单干，往往不是能力不够，是节奏不对。',
+            '主业先稳着，副业用「每周固定几小时」的方式跑。跑够三个月再看数据，别用感觉判断。'] },
+    { min:30, max:49, name:'搭伙型', judge:'找个人一起，比一个人强',
+      body:['你不是不能干，是不适合一个人干。你缺的那部分，找个互补的人比逼自己补要快得多。',
+            '先想清楚你最能干的那一段是什么，然后去找那个能接住另外一段的人。一个人硬撑，通常撑不过第三个月。'] },
+    { min:0, max:29, name:'地基型', judge:'你更适合在结构里把事做深',
+      body:['分数低不代表你不行。它只是说：你需要一个稳定的地基，才能把事做深。很多做得最好的人都在这种结构里。',
+            '如果你还是想试，别辞职。用业余时间跑一次最小的闭环，跑完你会知道自己到底是想干，还是只是不想上班。'] }
+  ];
+
+  /* ---------------- 计分（对外暴露给自测） ---------------- */
+  function scoreOf(answers){
+    var raw = { DRIVE:0, PATH:0, RISK:0, FULL:0 };
+    for (var i = 0; i < QUESTIONS.length; i++){
+      var q = QUESTIONS[i];
+      var picked = answers[i];
+      if (picked === undefined || picked === null) continue;
+      raw[q.dim] += q.options[picked].v;
+    }
+    var dimPercent = {};
+    for (var d = 0; d < DIMS.length; d++){
+      var key = DIMS[d];
+      dimPercent[key] = raw[key] / 20 * 100;
+    }
+    var total = Math.round((dimPercent.DRIVE + dimPercent.PATH + dimPercent.RISK + dimPercent.FULL) / 4);
+    return { raw:raw, dimPercent:dimPercent, total:total };
+  }
+
+  function bandOf(total){
+    for (var i = 0; i < BANDS.length; i++){
+      if (total >= BANDS[i].min && total <= BANDS[i].max) return BANDS[i];
+    }
+    return BANDS[BANDS.length - 1];
+  }
+
+  // 最短板：同分按 DRIVE > PATH > RISK > FULL 取前面的（DIMS 本身即该顺序）
+  function weakestOf(dimPercent){
+    var best = DIMS[0];
+    for (var i = 1; i < DIMS.length; i++){
+      if (dimPercent[DIMS[i]] < dimPercent[best]) best = DIMS[i];
+    }
+    return best;
+  }
+
+  /* ---------------- 流程 ---------------- */
+  var answers = [];
+  var cursor = 0;
+  var lastFocus = null;
+
+  var $cover = document.getElementById('screen-cover');
+  var $quiz = document.getElementById('screen-quiz');
+  var $result = document.getElementById('screen-result');
+  var $bar = document.getElementById('bar');
+  var $qcount = document.getElementById('qcount');
+  var $qtext = document.getElementById('qtext');
+  var $opts = document.getElementById('opts');
+  var $score = document.getElementById('score');
+  var $band = document.getElementById('band');
+  var $judge = document.getElementById('judge');
+  var $dims = document.getElementById('dims');
+  var $weakTitle = document.getElementById('weak-title');
+  var $weakAdvice = document.getElementById('weak-advice');
+  var $bandbody = document.getElementById('bandbody');
+  var $copy = document.getElementById('btn-copy');
+
+  function show(el){
+    [ $cover, $quiz, $result ].forEach(function(s){ s.classList.toggle('on', s === el); });
+    window.scrollTo(0, 0);
+  }
+
+  function renderQuestion(){
+    var q = QUESTIONS[cursor];
+    $qcount.textContent = '第 ' + (cursor + 1) + ' / ' + QUESTIONS.length + ' 题';
+    $bar.style.width = ((cursor) / QUESTIONS.length * 100) + '%';
+    $qtext.textContent = q.text;
+    $opts.innerHTML = '';
+    q.options.forEach(function(option, index){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt';
+      var idx = document.createElement('span');
+      idx.className = 'idx';
+      idx.textContent = String.fromCharCode(65 + index);
+      btn.appendChild(idx);
+      btn.appendChild(document.createTextNode(' ' + option.t));
+      btn.addEventListener('click', function(){
+        btn.classList.add('chosen');
+        answers[cursor] = index;
+        // 小延迟让选中态可见，然后进下一题
+        setTimeout(function(){
+          if (cursor + 1 < QUESTIONS.length){
+            cursor += 1;
+            renderQuestion();
+          } else {
+            $bar.style.width = '100%';
+            renderResult();
+          }
+        }, 130);
+      });
+      $opts.appendChild(btn);
+    });
+  }
+
+  function renderResult(){
+    var r = scoreOf(answers);
+    var band = bandOf(r.total);
+    var weak = weakestOf(r.dimPercent);
+
+    $score.textContent = String(r.total);
+    $band.textContent = band.name;
+    $judge.textContent = band.judge;
+
+    $dims.innerHTML = '';
+    DIMS.forEach(function(key){
+      var pct = Math.round(r.dimPercent[key]);
+      var row = document.createElement('div');
+      row.className = 'dim' + (key === weak ? ' weak' : '');
+      var name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = DIM_CN[key];
+      var val = document.createElement('span');
+      val.className = 'val';
+      val.textContent = pct + '%';
+      var track = document.createElement('span');
+      track.className = 'track';
+      var fill = document.createElement('i');
+      track.appendChild(fill);
+      row.appendChild(name); row.appendChild(val); row.appendChild(track);
+      $dims.appendChild(row);
+      // 下一帧再设宽度，触发过渡
+      requestAnimationFrame(function(){ fill.style.width = pct + '%'; });
+    });
+
+    var weakPct = Math.round(r.dimPercent[weak]);
+    // 四维同分时按 DRIVE>PATH>RISK>FULL 取 DRIVE 是稿子 5.3 的规则，
+    // 但四个分数一模一样时还写「你最低的那条」会让人以为坏了。
+    var allSame = DIMS.every(function(d){ return Math.round(r.dimPercent[d]) === weakPct; });
+    if (allSame){
+      $weakTitle.textContent = '四条一样高（各 ' + weakPct + '分）';
+    } else {
+      $weakTitle.textContent = '你最低的那条：' + DIM_CN[weak] + '（' + weakPct + '分）';
+    }
+    $weakAdvice.textContent = allSame
+      ? '四条一样高，说明你没偏科。真要补，随便挑一条动起来就行，不用纠结先练哪个。'
+      : (weakPct >= 85
+          ? '四维都在 85 分以上，没有真正的短板。下面这条是四维里相对最低的一项，留着备查：' + WEAK_ADVICE[weak]
+          : WEAK_ADVICE[weak]);
+
+    $bandbody.innerHTML = '';
+    band.body.forEach(function(text){
+      var p = document.createElement('p');
+      p.className = 'bodytext';
+      p.textContent = text;
+      $bandbody.appendChild(p);
+    });
+
+    $copy.textContent = '复制分数，看看谁比我高';
+    $copy.dataset.raw = String(r.total);
+    $copy.dataset.band = band.name;
+    $copy.dataset.judge = band.judge;
+
+    show($result);
+  }
+
+  function shareText(){
+    var total = $copy.dataset.raw;
+    var band = $copy.dataset.band;
+    var judge = $copy.dataset.judge;
+    return '我的单干体质：' + total + ' 分 —— ' + band + '，' + judge + '\n你也测测：' + location.href;
+  }
+
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function flash(text, revert){
+    $copy.textContent = text;
+    setTimeout(function(){ $copy.textContent = revert; }, 2000);
+  }
+
+  document.getElementById('btn-start').addEventListener('click', function(){
+    answers = [];
+    cursor = 0;
+    show($quiz);
+    renderQuestion();
+  });
+
+  $copy.addEventListener('click', function(){
+    var text = shareText();
+    var done = function(ok){ flash(ok ? '已复制' : '请长按选中复制', '复制分数，看看谁比我高'); };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(fallbackCopy(text)); });
+    } else {
+      done(fallbackCopy(text));
+    }
+  });
+
+  document.getElementById('btn-again').addEventListener('click', function(){
+    answers = [];
+    cursor = 0;
+    show($cover);
+  });
+
+  /* 给自测脚本用的钩子 */
+  window.__DANGAN__ = {
+    QUESTIONS: QUESTIONS,
+    DIMS: DIMS,
+    scoreOf: scoreOf,
+    bandOf: bandOf,
+    weakestOf: weakestOf,
+    answersList: function(){ return answers.slice(); },
+    setAnswers: function(list){ answers = list.slice(); },
+    finish: function(){ renderResult(); },
+    goTo: function(index){ cursor = index; show($quiz); renderQuestion(); },
+    optionCount: function(){ return $opts.children.length; },
+    clickOption: function(index){ $opts.children[index].click(); },
+    screens: function(){
+      return { cover:$cover.classList.contains('on'), quiz:$quiz.classList.contains('on'), result:$result.classList.contains('on') };
+    }
+  };
+})();
+</script>
+</body>
+</html>
